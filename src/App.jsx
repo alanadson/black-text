@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import devtools from "devtools-detect";
 import "./App.css";
 
 function App() {
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState("");
+  const [blockContent, setBlockContent] = useState(false);
 
   const generateCryptography = async () => {
     var a = prompt
@@ -22,8 +24,21 @@ function App() {
       .replace(/Y/gi, "Ү")
       .replace(/M/gi, "Μ")
       .replace(/N/gi, "Ν");
-    setResult(a);
+    // setResult(a);
+    const filler = "&ZeroWidthSpace;";
+    const b = [...a].join(filler);
+    setResult(b);
   };
+
+  useEffect(() => {
+    window.addEventListener("orientationchange", function () {
+      setBlockContent(false);
+    });
+
+    window.addEventListener("devtoolschange", (event) => {
+      setBlockContent(devtools.isOpen);
+    });
+  }, []);
 
   return (
     <div className="app-main">
@@ -38,7 +53,10 @@ function App() {
           cols="40"
         />
         <button onClick={generateCryptography}>Criptografar texto</button>
-        <h1>{result}</h1>
+
+        {blockContent && (
+          <div className="a" dangerouslySetInnerHTML={{ __html: result }} />
+        )}
       </>
     </div>
   );
