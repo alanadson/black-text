@@ -1,60 +1,97 @@
 import { useEffect, useState } from "react";
+import copy from "copy-to-clipboard";
 import devtools from "devtools-detect";
+import Typed from "react-typed";
 import "./App.css";
 
 function App() {
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState("");
-  const [blockContent, setBlockContent] = useState(false);
+  const [showText, setShowText] = useState(true);
+  const [orientation, setOrientation] = useState(true);
 
-  const generateCryptography = async () => {
-    var a = prompt
-      .toLocaleUpperCase()
-      .replace(/A/gi, "А")
-      .replace(/P/gi, "Р")
-      .replace(/C/gi, "С")
-      .replace(/B/gi, "В")
-      .replace(/T/gi, "Т")
-      .replace(/S/gi, "Ѕ")
-      .replace(/E/gi, "Е")
-      .replace(/X/gi, "Х")
-      .replace(/J/gi, "Ј")
-      .replace(/H/gi, "Н")
-      .replace(/O/gi, "О")
-      .replace(/Y/gi, "Ү")
-      .replace(/M/gi, "Μ")
-      .replace(/N/gi, "Ν");
-    // setResult(a);
+  const cryptography = prompt
+    .replace(/A/g, "А")
+    .replace(/B/g, "В")
+    .replace(/C/g, "С")
+    .replace(/E/g, "Е")
+    .replace(/H/g, "Н")
+    .replace(/E/g, "Е")
+    .replace(/K/g, "Κ")
+    .replace(/M/g, "М")
+    .replace(/N/g, "Ν")
+    .replace(/O/g, "О")
+    .replace(/P/g, "Р")
+    .replace(/S/g, "Ѕ")
+    .replace(/T/g, "Т")
+    .replace(/X/g, "​​​​​Х")
+    .replace(/Y/g, "​​​​​Υ")
+    .replace(/Z/g, "​​​​​Ζ")
+    .replace(/a/g, "а")
+    .replace(/c/g, "с")
+    .replace(/e/g, "е")
+    .replace(/i/g, "і")
+    .replace(/j/g, "ј")
+    .replace(/o/g, "о")
+    .replace(/p/g, "р")
+    .replace(/s/g, "ѕ")
+    .replace(/x/g, "х")
+    .replace(/y/g, "у");
+
+  const generateCryptographyEmail = async () => {
+    const email = "‮" + prompt.split("").reverse().join("");
+    copy(email);
+    setResult(email);
+  };
+
+  const generateCryptographySms = async () => {
+    copy(cryptography);
+    setResult(cryptography);
+  };
+
+  const generateCryptographyAnnouncement = async () => {
     const filler = "&ZeroWidthSpace;";
-    const b = [...a].join(filler);
+    const b = [...cryptography].join(filler);
+    const c = b.concat(filler);
     setResult(b);
   };
 
   useEffect(() => {
     window.addEventListener("orientationchange", function () {
-      setBlockContent(false);
+      if (screen.orientation.angle === 0 || screen.orientation.angle === 90) {
+        return setOrientation(false);
+      }
+
+      return setOrientation(true);
     });
 
     window.addEventListener("devtoolschange", (event) => {
-      setBlockContent(devtools.isOpen);
+      setShowText(devtools.isOpen);
     });
   }, []);
+
+  const headline = "BLACK TEXT";
 
   return (
     <div className="app-main">
       <>
-        <h2>Criptografador de Texto</h2>
+        <h2>
+          CRIPTOGRAFADOR <Typed strings={[headline]} typeSpeed={250} loop />
+        </h2>
 
         <textarea
           className="app-input"
           placeholder="Cole o texto que deseja criptografar e clique no botão abaixo👇👇"
           onChange={(e) => setPrompt(e.target.value)}
           rows="10"
-          cols="40"
+          cols="57"
         />
-        <button onClick={generateCryptography}>Criptografar texto</button>
-
-        {blockContent && (
+        <div className="app-button">
+          <button onClick={generateCryptographyEmail}>Email</button>
+          <button onClick={generateCryptographySms}>Sms</button>
+          <button onClick={generateCryptographyAnnouncement}>Anuncio</button>
+        </div>
+        {showText && orientation && (
           <div className="a" dangerouslySetInnerHTML={{ __html: result }} />
         )}
       </>
